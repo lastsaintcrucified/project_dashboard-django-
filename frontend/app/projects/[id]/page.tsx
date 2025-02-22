@@ -31,6 +31,7 @@ export default function ProjectDetails({
 	const router = useRouter();
 	const { id } = use(params);
 
+	//Get user role
 	useEffect(() => {
 		const token = getToken();
 		if (token) {
@@ -38,6 +39,7 @@ export default function ProjectDetails({
 		}
 	}, []);
 
+	//Fetch project details
 	useEffect(() => {
 		const fetchProject = async () => {
 			try {
@@ -91,39 +93,15 @@ export default function ProjectDetails({
 						<p>
 							<strong>Due Date:</strong> {project?.due_date}
 						</p>
-						<p>
+						<div>
 							<strong>Assigned Users:</strong>{" "}
 							{project?.assigned_users_data.map((user) => (
 								<div key={user.email}>{user.email}</div>
 							))}
-						</p>
+						</div>
 					</CardContent>
 				</Card>
 			</div>
-			{/* <div className='p-6'>
-				<Card className='m-20 p-4 flex-col items-center justify-around shadow-md'>
-					<h1 className='text-2xl font-bold'>{project?.title}</h1>
-					<p>{project?.description}</p>
-					<p>
-						<span className='font-bold'>Status:</span> {project?.status}
-					</p>
-					<p>
-						<span className='font-bold'>Due Date: </span>
-						{project?.due_date}
-					</p>
-					<p className='font-bold'>Assigned Users:</p>
-					<ul className='list-disc pl-4'>
-						{project?.assigned_users_data.map((user) => (
-							<li
-								key={user.id}
-								className='font-semibold text-green-600'
-							>
-								{user.email}
-							</li>
-						))}
-					</ul>
-				</Card>
-			</div> */}
 		</>
 	);
 }

@@ -19,9 +19,11 @@ export default function DashboardPage() {
 
 	useEffect(() => {
 		if (!localStorage.getItem("token")) {
+			//Checking if token is present
 			router.push("/login");
 		}
 		const fetchProjects = async () => {
+			//Fetching projects
 			try {
 				const response = await api.get("/projects/");
 				console.log(response.data);
