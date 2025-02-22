@@ -174,6 +174,10 @@ The backend will be available at **`http://localhost:8000`**.
 
 # **🛠 API Endpoints**
 
+```sh
+swagger link http://localhost:8000/api/docs/#/api/api_projects_list
+```
+
 ### **Authentication**
 
 - `POST /api/login/` → User login (returns access & refresh token)
