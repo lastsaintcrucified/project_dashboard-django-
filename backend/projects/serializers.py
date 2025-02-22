@@ -18,5 +18,24 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        token['role'] = user.role
+
+        # Add custom claims
+        token['role'] = user.role  # ✅ Include the role in the token
         return token
+    def validate(self, attrs):
+        # Override default validation to authenticate with email
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        if email and password:
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                raise serializers.ValidationError("Invalid credentials")
+
+            if not user.check_password(password):
+                raise serializers.ValidationError("Invalid credentials")
+
+            attrs["username"] = user.email  # JWT still expects 'username'
+        
+        return super().validate(attrs)
