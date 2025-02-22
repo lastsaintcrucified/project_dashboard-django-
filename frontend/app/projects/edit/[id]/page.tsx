@@ -20,6 +20,10 @@ export default function EditProjectPage({
 	const [dueDate, setDueDate] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
+	const [users, setUsers] = useState<any[]>([]);
+	const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
+	const [preSelectedUsers, setPreSelectedUsers] = useState<any[]>([]);
+
 	const router = useRouter();
 	const { id } = use(params);
 
@@ -27,11 +31,16 @@ export default function EditProjectPage({
 		const fetchProject = async () => {
 			try {
 				const response = await api.get(`/projects/${id}/`);
+				const usersResponse = await api.get("/users/");
 				const project = response.data;
 				setTitle(project.title);
 				setDescription(project.description);
 				setStatus(project.status);
 				setDueDate(project.due_date);
+				setUsers(usersResponse.data);
+				setPreSelectedUsers(
+					project.assigned_users_data.map((user: any) => user.id)
+				);
 			} catch (error) {
 				setError("Failed to fetch project details.");
 			} finally {
@@ -52,6 +61,8 @@ export default function EditProjectPage({
 				title,
 				description,
 				status,
+				assigned_users:
+					selectedUsers.length > 0 ? selectedUsers : preSelectedUsers,
 				due_date: dueDate,
 			});
 
@@ -99,6 +110,27 @@ export default function EditProjectPage({
 						>
 							<option value='Active'>Active</option>
 							<option value='Completed'>Completed</option>
+						</select>
+						<select
+							name='assigned_users'
+							multiple={true}
+							className='border p-2 w-full'
+							value={selectedUsers}
+							onChange={(e) => {
+								const options = [...e.target.selectedOptions];
+								const values = options.map((option) => option.value);
+								console.log("selected users", values);
+								setSelectedUsers([...values]);
+							}}
+						>
+							{users.map((user: any) => (
+								<option
+									key={user.id}
+									value={Number(user.id)}
+								>
+									{user.email}
+								</option>
+							))}
 						</select>
 						{error && <p className='text-red-500'>{error}</p>}
 						<Button

@@ -11,6 +11,7 @@ interface Project {
 	title: string;
 	description: string;
 	status: string;
+	assigned_users_data: any[];
 	due_date: string;
 }
 
@@ -28,6 +29,7 @@ export default function ProjectDetails({
 		const fetchProject = async () => {
 			try {
 				const response = await api.get(`/projects/${id}/`);
+				console.log("Project:", response.data);
 				setProject(response.data);
 			} catch (error) {
 				console.error("Error fetching project:", error);
@@ -46,11 +48,27 @@ export default function ProjectDetails({
 		<>
 			<Navbar />
 			<div className='p-6'>
-				<Card className='m-20 p-4'>
+				<Card className='m-20 p-4 flex-col items-center justify-around shadow-md'>
 					<h1 className='text-2xl font-bold'>{project?.title}</h1>
 					<p>{project?.description}</p>
-					<p>Status: {project?.status}</p>
-					<p>Due Date: {project?.due_date}</p>
+					<p>
+						<span className='font-bold'>Status:</span> {project?.status}
+					</p>
+					<p>
+						<span className='font-bold'>Due Date: </span>
+						{project?.due_date}
+					</p>
+					<p className='font-bold'>Assigned Users:</p>
+					<ul className='list-disc pl-4'>
+						{project?.assigned_users_data.map((user) => (
+							<li
+								key={user.id}
+								className='font-semibold text-green-600'
+							>
+								{user.email}
+							</li>
+						))}
+					</ul>
 				</Card>
 			</div>
 		</>

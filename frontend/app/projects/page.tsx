@@ -42,6 +42,7 @@ export default function ProjectsPage({ params }: { params: { id: string } }) {
 		const fetchProjects = async () => {
 			try {
 				const response = await api.get("/projects/");
+				console.log("Projects:", response.data);
 				setProjects(response.data);
 				setFilteredProjects(response.data);
 			} catch (error) {
@@ -161,18 +162,24 @@ export default function ProjectsPage({ params }: { params: { id: string } }) {
 								</Card>
 							))}
 						</div>
-						<Link href='/projects/new'>
-							<Button className=' bg-green-500 hover:bg-green-900 '>
-								Create New Project
-							</Button>
-						</Link>
+						{userRole === "admin" && (
+							<Link href='/projects/new'>
+								<Button className=' bg-green-500 hover:bg-green-900 '>
+									Create New Project
+								</Button>
+							</Link>
+						)}
 					</div>
 				) : (
 					<div className='flex flex-col items-center gap-4'>
 						<p>No projects found.</p>
-						<Link href='/projects/new'>
-							<Button>Create New Project</Button>
-						</Link>
+						{userRole === "admin" && (
+							<Link href='/projects/new'>
+								<Button className=' bg-green-500 hover:bg-green-900 '>
+									Create New Project
+								</Button>
+							</Link>
+						)}
 					</div>
 				)}
 			</div>

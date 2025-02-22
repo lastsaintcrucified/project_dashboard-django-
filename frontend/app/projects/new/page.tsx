@@ -11,19 +11,28 @@ export default function NewProjectPage() {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [status, setStatus] = useState("active");
-	const [users, setUsers] = useState([]);
+	const [users, setUsers] = useState<any[]>([]);
 	const [selectedUsers, setSelectedUsers] = useState<any[]>([]);
 	const [dueDate, setDueDate] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const router = useRouter();
 
-	// useEffect(() => {
-	// 	fetch("http://localhost:8000/api/users/") // 👈 Fetch users from backend
-	// 		.then((res) => res.json())
-	// 		.then((data) => setUsers(data))
-	// 		.catch((error) => console.error("Error fetching users:", error));
-	// }, []);
+	useEffect(() => {
+		const fetchProjects = async () => {
+			try {
+				const response = await api.get("/users/");
+				console.log("users", response.data);
+				setUsers(response.data);
+			} catch (error) {
+				console.error("Error fetching projects:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		fetchProjects();
+	}, []);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -50,7 +59,7 @@ export default function NewProjectPage() {
 	return (
 		<div className='p-6'>
 			<h1 className='text-2xl font-bold mb-4'>Create New Project</h1>
-			<Card className='p-6 max-w-lg'>
+			<Card className='p-6 max-w-lg '>
 				<form
 					onSubmit={handleSubmit}
 					className='flex flex-col gap-4'
@@ -82,28 +91,32 @@ export default function NewProjectPage() {
 						<option value='active'>Active</option>
 						<option value='completed'>Completed</option>
 					</select>
-					{/* <select
-						multiple
+					<select
+						name='assigned_users'
+						multiple={true}
 						className='border p-2 w-full'
-						onChange={(e) =>
-							setSelectedUsers(
-								Array.from(e.target.selectedOptions, (option) => option.value)
-							)
-						}
+						value={selectedUsers}
+						onChange={(e) => {
+							const options = [...e.target.selectedOptions];
+							const values = options.map((option) => option.value);
+							console.log("selected users", values);
+							setSelectedUsers([...values]);
+						}}
 					>
 						{users.map((user: any) => (
 							<option
 								key={user.id}
-								value={user.id}
+								value={Number(user.id)}
 							>
 								{user.email}
 							</option>
 						))}
-					</select> */}
+					</select>
 					{error && <p className='text-red-500'>{error}</p>}
 					<Button
 						type='submit'
 						disabled={loading}
+						className='bg-green-500 hover:bg-green-600'
 					>
 						{loading ? "Creating..." : "Create Project"}
 					</Button>
