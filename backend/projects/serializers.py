@@ -8,11 +8,21 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'role']
 
 class ProjectSerializer(serializers.ModelSerializer):
-    assigned_users = UserSerializer(many=True, read_only=True)
+    assigned_users = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), many=True, write_only=True  # Allow updating with user IDs
+    )
+    assigned_users_data = UserSerializer(source="assigned_users", many=True, read_only=True)
 
     class Meta:
         model = Project
         fields = '__all__'
+
+    def validate_assigned_users(self, users):
+        """Ensure assigned users exist in the database"""
+        for user in users:
+            if not User.objects.filter(id=user.id).exists():
+                raise serializers.ValidationError(f"User with ID {user.id} does not exist.")
+        return users
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod

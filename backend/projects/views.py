@@ -29,3 +29,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.prefetch_related('assigned_users').all()
     serializer_class = ProjectSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        """Ensure the project is created with assigned users"""
+        assigned_users = self.request.data.get('assigned_users', [])
+        project = serializer.save()
+        project.assigned_users.set(assigned_users)  # Assign users when creating a project
+
+    def perform_update(self, serializer):
+        """Ensure users can be reassigned"""
+        assigned_users = self.request.data.get('assigned_users', [])
+        project = serializer.save()
+        project.assigned_users.set(assigned_users)  # Update assigned users
