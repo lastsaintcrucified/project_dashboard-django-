@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { api } from "@/lib/api";
 import ProjectStatusChart from "@/components/ProjectStatusChart";
 import Navbar from "@/components/Navbar";
@@ -44,22 +44,46 @@ export default function DashboardPage() {
 				{loading ? (
 					<p>...loading</p>
 				) : (
-					<div className='grid grid-cols-2 gap-4'>
-						<Card className='p-4'>Total Projects: {projects.length}</Card>
-						<Card className='p-4'>
-							Completed:{" "}
-							{
-								projects.filter(
-									(project: any) => project.status === "completed"
-								).length
-							}
+					<div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
+						<Card className='shadow-md'>
+							<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+								<CardTitle className='text-xl font-medium'>
+									Total Projects:
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className='text-2xl font-bold'>{projects.length}</div>
+							</CardContent>
 						</Card>
-						<Card className='p-4'>
-							Active:{" "}
-							{
-								projects.filter((project: any) => project.status === "active")
-									.length
-							}
+						<Card className='shadow-md'>
+							<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+								<CardTitle className='text-xl font-medium'>
+									Completed:
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className='text-2xl font-bold'>
+									{
+										projects.filter(
+											(project: any) => project.status === "completed"
+										).length
+									}
+								</div>
+							</CardContent>
+						</Card>
+						<Card className='shadow-md'>
+							<CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+								<CardTitle className='text-xl font-medium'>Active:</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<div className='text-2xl font-bold'>
+									{
+										projects.filter(
+											(project: any) => project.status === "active"
+										).length
+									}
+								</div>
+							</CardContent>
 						</Card>
 					</div>
 				)}

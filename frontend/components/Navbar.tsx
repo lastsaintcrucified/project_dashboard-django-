@@ -6,8 +6,8 @@ import {
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
-	navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { Home, Users, FolderKanban, LogOut } from "lucide-react";
 
 export default function Navbar() {
 	const router = useRouter();
@@ -25,14 +25,22 @@ export default function Navbar() {
 	};
 
 	return (
-		<NavigationMenu className='min-w-[100%] p-2 bg-gray-100 justify-start fixed'>
+		<NavigationMenu className='w-[100%] p-2 bg-slate-100 justify-between fixed'>
 			<NavigationMenuList>
+				<NavigationMenuItem>
+					<p className='font-bold text-xl'>Project Dashboard</p>
+				</NavigationMenuItem>
+			</NavigationMenuList>
+			<NavigationMenuList className='flex justify-end'>
 				<NavigationMenuItem>
 					<Button
 						onClick={() => handleLink("/dashboard")}
 						className='bg-gray-100 hover:bg-gray-200 text-black'
 					>
-						<NavigationMenuLink>Dashboard</NavigationMenuLink>
+						<NavigationMenuLink className='flex items-center justify-center'>
+							<Home className='mr-1 h-4 w-4' />
+							Dashboard
+						</NavigationMenuLink>
 					</Button>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
@@ -40,13 +48,16 @@ export default function Navbar() {
 						onClick={() => handleLink("/projects")}
 						className='bg-gray-100 hover:bg-gray-200 text-black'
 					>
-						<NavigationMenuLink>Projects</NavigationMenuLink>
+						<NavigationMenuLink className='flex items-center justify-center'>
+							<FolderKanban className='mr-1 h-4 w-4' />
+							Projects
+						</NavigationMenuLink>
 					</Button>
 				</NavigationMenuItem>
 				<NavigationMenuItem>
 					<Button
 						onClick={handleLogout}
-						className='bg-red-500 hover:bg-red-700 fixed top-2 right-2'
+						className='bg-red-500 hover:bg-red-700 '
 					>
 						Logout
 					</Button>

@@ -15,11 +15,22 @@ import {
 } from "@/components/ui/select";
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/navigation";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 interface Project {
 	id: number;
 	title: string;
 	status: string;
+	due_date: string;
+	assigned_users_data: any[];
 }
 
 export default function ProjectsPage({ params }: { params: { id: string } }) {
@@ -94,10 +105,19 @@ export default function ProjectsPage({ params }: { params: { id: string } }) {
 	return (
 		<>
 			<Navbar />
-			<div className='p-6'>
-				<h1 className='text-2xl font-bold mb-4'>Projects</h1>
+			<div className='py-20 px-5'>
+				<div className='flex justify-between items-center'>
+					<h1 className='text-3xl font-bold'>Projects</h1>
+					{userRole === "admin" && (
+						<Link href='/projects/new'>
+							<Button className=' bg-green-500 hover:bg-green-900 '>
+								Create New Project
+							</Button>
+						</Link>
+					)}
+				</div>
 				{/* Search and Filter */}
-				<div className='flex gap-4 mb-4'>
+				<div className='flex gap-4 my-4'>
 					<Input
 						type='text'
 						placeholder='Search projects...'
@@ -118,58 +138,71 @@ export default function ProjectsPage({ params }: { params: { id: string } }) {
 						</SelectContent>
 					</Select>
 				</div>
-				{/* Project List */}
 				{loading ? (
 					<p>Loading...</p>
 				) : filteredProjects.length > 0 ? (
-					<div className='flex flex-col gap-4'>
-						<div className='grid gap-4'>
+					<Table className='mt-5'>
+						<TableHeader>
+							<TableRow>
+								<TableHead>Title</TableHead>
+								<TableHead>Status</TableHead>
+								<TableHead>Due Date</TableHead>
+								<TableHead>Assigned Users</TableHead>
+								<TableHead>Actions</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
 							{filteredProjects.map((project) => (
-								<Card
-									key={project.id}
-									className='p-4 shadow-md rounded-lg'
-								>
-									<div className='flex justify-between items-center'>
-										<h2 className='text-lg font-semibold'>{project.title}</h2>
-										<Button
-											onClick={() => router.push(`/projects/${project.id}`)}
-											className='w-12 h-8 text-xs bg-blue-400 hover:bg-blue-600'
+								<TableRow key={project.id}>
+									<TableCell className='font-medium'>{project.title}</TableCell>
+									<TableCell>
+										<Badge
+											variant={
+												project.status === "active" ? "default" : "secondary"
+											}
 										>
-											View
-										</Button>
-									</div>
-									<p>Status: {project.status}</p>
-
-									{userRole === "admin" && (
+											{project.status}
+										</Badge>
+									</TableCell>
+									<TableCell>{project.due_date}</TableCell>
+									<TableCell>
+										{project.assigned_users_data.map((user) => (
+											<div key={user.email}>{user.email}</div>
+										))}
+									</TableCell>
+									<TableCell>
 										<div className='flex gap-2 my-3'>
-											<Link href={`/projects/edit/${project.id}`}>
-												<Button
-													onClick={() => handleEdit(project.id)}
-													className='w-12 h-8 text-xs bg-green-500 hover:bg-green-600'
-												>
-													Edit
-												</Button>
-											</Link>
+											{userRole === "admin" && (
+												<>
+													<Link href={`/projects/edit/${project.id}`}>
+														<Button
+															onClick={() => handleEdit(project.id)}
+															className='w-12 h-8 text-xs bg-green-500 hover:bg-green-600'
+														>
+															Edit
+														</Button>
+													</Link>
+													<Button
+														variant='destructive'
+														onClick={() => handleDelete(project.id)}
+														className='w-12 h-8 text-xs'
+													>
+														Delete
+													</Button>
+												</>
+											)}
 											<Button
-												variant='destructive'
-												onClick={() => handleDelete(project.id)}
-												className='w-12 h-8 text-xs'
+												variant='outline'
+												className='w-12 h-8 text-xs bg-slate-100 hover:bg-slate-300 hover:text-black text-black'
 											>
-												Delete
+												<Link href={`/projects/${project.id}`}>View</Link>
 											</Button>
 										</div>
-									)}
-								</Card>
+									</TableCell>
+								</TableRow>
 							))}
-						</div>
-						{userRole === "admin" && (
-							<Link href='/projects/new'>
-								<Button className=' bg-green-500 hover:bg-green-900 '>
-									Create New Project
-								</Button>
-							</Link>
-						)}
-					</div>
+						</TableBody>
+					</Table>
 				) : (
 					<div className='flex flex-col items-center gap-4'>
 						<p>No projects found.</p>

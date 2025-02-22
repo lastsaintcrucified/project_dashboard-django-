@@ -2,9 +2,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navbar from "@/components/Navbar";
 import { use } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { getToken, getUserRole } from "@/lib/auth";
 
 interface Project {
 	id: number;
@@ -22,8 +26,17 @@ export default function ProjectDetails({
 }) {
 	const [project, setProject] = useState<Project | null>(null);
 	const [loading, setLoading] = useState(true);
+	const [userRole, setUserRole] = useState<string | null>(null);
+
 	const router = useRouter();
 	const { id } = use(params);
+
+	useEffect(() => {
+		const token = getToken();
+		if (token) {
+			setUserRole(getUserRole(token));
+		}
+	}, []);
 
 	useEffect(() => {
 		const fetchProject = async () => {
@@ -47,7 +60,47 @@ export default function ProjectDetails({
 	return (
 		<>
 			<Navbar />
-			<div className='p-6'>
+			<div className='py-20 px-5'>
+				<div className='flex justify-between items-center'>
+					<h1 className='text-3xl font-bold'>{project?.title}</h1>
+					{userRole === "admin" && (
+						<Button
+							asChild
+							className='bg-green-500 hover:bg-green-700 text-white'
+						>
+							<Link href={`/projects/${id}/edit`}>Edit Project</Link>
+						</Button>
+					)}
+				</div>
+				<Card className='mt-4 shadow-md'>
+					<CardHeader>
+						<CardTitle>Project Details</CardTitle>
+					</CardHeader>
+					<CardContent className='space-y-2'>
+						<p>
+							<strong>Description:</strong> {project?.description}
+						</p>
+						<p>
+							<strong>Status:</strong>{" "}
+							<Badge
+								variant={project?.status === "active" ? "default" : "secondary"}
+							>
+								{project?.status}
+							</Badge>
+						</p>
+						<p>
+							<strong>Due Date:</strong> {project?.due_date}
+						</p>
+						<p>
+							<strong>Assigned Users:</strong>{" "}
+							{project?.assigned_users_data.map((user) => (
+								<div key={user.email}>{user.email}</div>
+							))}
+						</p>
+					</CardContent>
+				</Card>
+			</div>
+			{/* <div className='p-6'>
 				<Card className='m-20 p-4 flex-col items-center justify-around shadow-md'>
 					<h1 className='text-2xl font-bold'>{project?.title}</h1>
 					<p>{project?.description}</p>
@@ -70,7 +123,7 @@ export default function ProjectDetails({
 						))}
 					</ul>
 				</Card>
-			</div>
+			</div> */}
 		</>
 	);
 }
