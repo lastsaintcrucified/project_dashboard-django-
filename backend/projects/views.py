@@ -1,5 +1,6 @@
 from urllib import response
 from rest_framework import viewsets, permissions
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.db.models import Count
 from .models import User
@@ -20,7 +21,10 @@ def dashboard_view(request):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    def get_permissions(self):
+        if self.action == 'create':
+            return [AllowAny()]  # Allow signup
+        return [IsAuthenticated()]  # Require login for other actions
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

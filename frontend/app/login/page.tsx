@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 // const API_BASE_URL = "http://localhost:8000/api";
-const API_BASE_URL = "https://project-dashboard-django.onrender.com/api";
+// const API_BASE_URL = "https://project-dashboard-django.onrender.com/api";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
@@ -22,10 +23,13 @@ export default function LoginPage() {
 		setError("");
 
 		try {
-			const response = await axios.post(`${API_BASE_URL}/login/`, {
-				email: email,
-				password,
-			});
+			const response = await axios.post(
+				`${process.env.NEXT_PUBLIC_API_URL}}/login/`,
+				{
+					email: email,
+					password,
+				}
+			);
 
 			localStorage.setItem("token", response.data.access);
 			router.push("/dashboard");
@@ -68,6 +72,15 @@ export default function LoginPage() {
 				>
 					{loading ? "Logging in..." : "Login"}
 				</Button>
+				<p className='text-sm mt-4 text-center'>
+					Not registered?{" "}
+					<Link
+						href='/signup'
+						className='text-blue-600 hover:underline'
+					>
+						Sign up now
+					</Link>
+				</p>
 			</form>
 		</div>
 	);
