@@ -24,7 +24,7 @@ export default function LoginPage() {
 
 		try {
 			const response = await axios.post(
-				`${process.env.NEXT_PUBLIC_API_URL}}/login/`,
+				`${process.env.NEXT_PUBLIC_API_URL}/login/`,
 				{
 					email: email,
 					password,
