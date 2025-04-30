@@ -33,7 +33,7 @@ interface Project {
 	assigned_users_data: any[];
 }
 
-export default function ProjectsPage({ params }: { params: { id: string } }) {
+export default function ProjectsPage() {
 	const [projects, setProjects] = useState<Project[]>([]);
 	const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
 	const [search, setSearch] = useState("");
