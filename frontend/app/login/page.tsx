@@ -5,7 +5,8 @@ import axios from "axios";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const API_BASE_URL = "http://localhost:8000/api";
+// const API_BASE_URL = "http://localhost:8000/api";
+const API_BASE_URL = "https://project-dashboard-django.onrender.com/api";
 
 export default function LoginPage() {
 	const [email, setEmail] = useState("");
